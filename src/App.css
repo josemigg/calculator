@@ -40,5 +40,5 @@ body {
 
 .calculator__button:last-child {
   background: #f33d1d;
-  column-span: 2;
+  grid-column: span 2;
 }

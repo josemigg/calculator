@@ -6,8 +6,48 @@ import "./App.css";
 
 function App() {
   const [currentValue, setCurrentValue] = useState("0");
+  const [lastOperation, setLastOperation] = useState();
 
   const handleButtonClick = (buttonValue) => {
+    if (buttonValue === "." && currentValue.includes(".")) {
+      return;
+    }
+
+    if (buttonValue === ".") {
+      setCurrentValue(currentValue + buttonValue);
+      return;
+    }
+
+    if (buttonValue === "+-") {
+      setCurrentValue(currentValue * -1);
+      return;
+    }
+
+    if (
+      buttonValue === "/" ||
+      buttonValue === "x" ||
+      buttonValue === "+" ||
+      buttonValue === "-"
+    ) {
+      if (typeof lastOperation === "undefined") {
+        setCurrentValue(currentValue + buttonValue);
+        setLastOperation(buttonValue);
+        return;
+      }
+
+      const numbers = currentValue.split(lastOperation);
+
+      if (numbers.length === 2) {
+        if (buttonValue === "x") {
+          setCurrentValue(numbers[0] * numbers[1] + buttonValue);
+          setLastOperation(buttonValue);
+          return;
+        }
+      }
+
+      return;
+    }
+
     if (buttonValue === "C") {
       console.log("me he reseteado");
       setCurrentValue("0");
@@ -17,6 +57,7 @@ function App() {
     if (currentValue === "0") {
       setCurrentValue(buttonValue);
     } else {
+      console.log(currentValue, buttonValue);
       setCurrentValue(currentValue + buttonValue);
     }
   };
@@ -32,7 +73,7 @@ function App() {
         <CalculatorButton value="7" onClick={handleButtonClick} />
         <CalculatorButton value="8" onClick={handleButtonClick} />
         <CalculatorButton value="9" onClick={handleButtonClick} />
-        <CalculatorButton value="X" onClick={handleButtonClick} />
+        <CalculatorButton value="x" onClick={handleButtonClick} />
         <CalculatorButton value="4" onClick={handleButtonClick} />
         <CalculatorButton value="5" onClick={handleButtonClick} />
         <CalculatorButton value="6" onClick={handleButtonClick} />
