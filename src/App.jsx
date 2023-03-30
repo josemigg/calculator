@@ -9,6 +9,8 @@ function App() {
   const [lastOperation, setLastOperation] = useState();
 
   const handleButtonClick = (buttonValue) => {
+    console.log(buttonValue);
+
     if (buttonValue === "." && currentValue.includes(".")) {
       return;
     }
@@ -35,11 +37,34 @@ function App() {
         return;
       }
 
-      const numbers = currentValue.split(lastOperation);
+      const numbers = currentValue.split(lastOperation).map((element) => {
+        if (element === "") {
+          return null;
+        }
+        return Number(element);
+      });
 
-      if (numbers.length === 2) {
-        if (buttonValue === "x") {
+      if (numbers.length === 2 && numbers[1] !== null) {
+        if (lastOperation === "x") {
           setCurrentValue(numbers[0] * numbers[1] + buttonValue);
+          setLastOperation(buttonValue);
+          return;
+        }
+
+        if (lastOperation === "-") {
+          setCurrentValue(numbers[0] - numbers[1] + buttonValue);
+          setLastOperation(buttonValue);
+          return;
+        }
+
+        if (lastOperation === "+") {
+          setCurrentValue(numbers[0] + numbers[1] + buttonValue);
+          setLastOperation(buttonValue);
+          return;
+        }
+
+        if (lastOperation === "/") {
+          setCurrentValue(numbers[0] / numbers[1] + buttonValue);
           setLastOperation(buttonValue);
           return;
         }
@@ -51,6 +76,7 @@ function App() {
     if (buttonValue === "C") {
       console.log("me he reseteado");
       setCurrentValue("0");
+      setLastOperation(undefined);
       return;
     }
 
