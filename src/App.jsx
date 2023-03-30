@@ -4,6 +4,21 @@ import { MyNewComponent } from "./MyNewComponent";
 import { CalculatorButton } from "./CalculatorButton";
 import "./App.css";
 
+function calculateOperation(number1, number2, operation) {
+  switch (operation) {
+    case "x":
+      return number1 * number2;
+    case "-":
+      return number1 - number2;
+    case "+":
+      return number1 + number2;
+    case "/":
+      return number1 / number2;
+    default:
+      return 0;
+  }
+}
+
 function App() {
   const [currentValue, setCurrentValue] = useState("0");
   const [lastOperation, setLastOperation] = useState();
@@ -29,8 +44,20 @@ function App() {
       buttonValue === "/" ||
       buttonValue === "x" ||
       buttonValue === "+" ||
-      buttonValue === "-"
+      buttonValue === "-" ||
+      buttonValue === "=" ||
+      buttonValue === "%"
     ) {
+      if (typeof lastOperation === "undefined" && buttonValue === "%") {
+        const percentaje = currentValue / 100;
+        setCurrentValue(percentaje.toFixed(2));
+        return;
+      }
+
+      if (typeof lastOperation === "undefined" && buttonValue === "=") {
+        return;
+      }
+
       if (typeof lastOperation === "undefined") {
         setCurrentValue(currentValue + buttonValue);
         setLastOperation(buttonValue);
@@ -45,29 +72,28 @@ function App() {
       });
 
       if (numbers.length === 2 && numbers[1] !== null) {
-        if (lastOperation === "x") {
-          setCurrentValue(numbers[0] * numbers[1] + buttonValue);
-          setLastOperation(buttonValue);
+        let operationResult;
+        let lastNumber = numbers[1];
+
+        if (buttonValue === "%") {
+          lastNumber = (numbers[1] / 100) * numbers[0];
+        }
+
+        operationResult = calculateOperation(
+          numbers[0],
+          lastNumber,
+          lastOperation
+        );
+
+        if (buttonValue === "=" || buttonValue === "%") {
+          setCurrentValue(operationResult);
+          setLastOperation(undefined);
           return;
         }
 
-        if (lastOperation === "-") {
-          setCurrentValue(numbers[0] - numbers[1] + buttonValue);
-          setLastOperation(buttonValue);
-          return;
-        }
-
-        if (lastOperation === "+") {
-          setCurrentValue(numbers[0] + numbers[1] + buttonValue);
-          setLastOperation(buttonValue);
-          return;
-        }
-
-        if (lastOperation === "/") {
-          setCurrentValue(numbers[0] / numbers[1] + buttonValue);
-          setLastOperation(buttonValue);
-          return;
-        }
+        setCurrentValue(operationResult + buttonValue);
+        setLastOperation(buttonValue);
+        return;
       }
 
       return;
